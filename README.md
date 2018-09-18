@@ -1,8 +1,8 @@
 <p align="center"><img src="logo.png" alt="logo" height="250px"></p>
 
-RxBiometric
+RxBiometric [![Build Status](https://img.shields.io/travis/pwittchen/RxBiometric.svg?branch=master&style=flat-square)](https://travis-ci.org/pwittchen/RxBiometric)  ![Maven Central](https://img.shields.io/maven-central/v/com.github.pwittchen/rxbiometric.svg?style=flat-square)
 ===========
-RxJava and RxKotlin bindings for Biometric Prompt on Android (added in Android 9 Pie, API Level 28+)
+RxJava and RxKotlin bindings for Biometric Prompt (Fingerprint Scanner) on Android (added in Android 9 Pie, API Level 28+)
 
 *If your app is drawing its own fingerprint auth dialogs, you should switch to using the BiometricPrompt API as soon as possible.*
 
@@ -20,6 +20,7 @@ Contents
 - [JavaDoc](#javadoc)
 - [Changelog](#changelog)
 - [Releasing](#releasing)
+- [Mentions](#mentions)
 - [References](#references)
 - [License](#license)
 
@@ -107,7 +108,13 @@ Complete example of the working application can be found in the `kotlin-app` dir
 Download
 --------
 
-TBD.
+You can depend on the library through Gradle:
+
+```groovy
+dependencies {
+  implementation 'com.github.pwittchen:rxbiometric:0.0.1'
+}
+```
 
 Tests
 -----
@@ -156,6 +163,11 @@ Releasing
 ---------
 
 See [RELEASING.md](https://github.com/pwittchen/RxBiometric/blob/master/RELEASING.md) file.
+
+Mentions
+--------
+- [Android Weekly - issue #324](https://androidweekly.net/issues/issue-324)
+- [Android Weekly China - issue #194](https://androidweekly.cn/android-dev-weekly-issue-194/)
 
 References
 ----------
