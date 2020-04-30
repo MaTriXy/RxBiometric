@@ -1,6 +1,6 @@
 <p align="center"><img src="logo.png" alt="logo" height="250px"></p>
 
-RxBiometric [![Build Status](https://img.shields.io/travis/pwittchen/RxBiometric.svg?branch=master&style=flat-square)](https://travis-ci.org/pwittchen/RxBiometric)  ![Maven Central](https://img.shields.io/maven-central/v/com.github.pwittchen/rxbiometric.svg?style=flat-square)
+RxBiometric [![Build Status](https://img.shields.io/travis/pwittchen/RxBiometric.svg?branch=master&style=flat-square)](https://travis-ci.org/pwittchen/RxBiometric)  ![Maven Central](https://img.shields.io/maven-central/v/com.github.pwittchen/rxbiometric.svg?style=flat-square) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxBiometric-brightgreen.svg?style=flat-square)](https://android-arsenal.com/details/1/7245)
 ===========
 RxJava and RxKotlin bindings for Biometric Prompt (Fingerprint Scanner) on Android (added in Android 9 Pie, API Level 28+)
 
@@ -37,7 +37,6 @@ RxBiometric
   .negativeButtonListener(DialogInterface.OnClickListener { _, _ ->
     showMessage("cancel")
   })
-  .cancellationSignal(cancellationSignal)
   .executor(mainExecutor)
   .build()
   .authenticate(context)
@@ -49,20 +48,18 @@ RxBiometric
   )
 ```
 
-Library also have validation methods in the `Preconditions` class, which you can use to verify if you're able to use Biometric.
+Library also have validation method in the `Preconditions` class, which you can use to verify if you're able to use Biometric.
 
 ```kotlin
 Preconditions.hasBiometricSupport(context)
-Preconditions.isAtLeastAndroidPie()
-Preconditions.canHandleBiometric() // all conditions above are satisfied
 ```
 
-There's also `RxPreconditions` class, which has the same methods wrapped in RxJava `Single<Boolean>` type,
+There's also `RxPreconditions` class, which has the same method wrapped in RxJava `Single<Boolean>` type,
 which you can use to create fluent data flow like in the example below
 
 ```kotlin
 RxPreconditions
-  .canHandleBiometric(context)
+  .hasBiometricSupport(context)
   .flatMapCompletable {
     if (!it) Completable.error(BiometricNotSupported())
     else
@@ -73,7 +70,6 @@ RxPreconditions
         .negativeButtonListener(DialogInterface.OnClickListener { _, _ ->
           showMessage("cancel")
         })
-        .cancellationSignal(CancellationSignal())
         .executor(mainExecutor)
         .build()
         .authenticate(context)
@@ -112,7 +108,7 @@ You can depend on the library through Gradle:
 
 ```groovy
 dependencies {
-  implementation 'com.github.pwittchen:rxbiometric:0.0.1'
+  implementation 'com.github.pwittchen:rxbiometric:0.1.0'
 }
 ```
 
@@ -133,7 +129,7 @@ Code style used in the project is called `SquareAndroid` from Java Code Styles r
 Static code analysis
 --------------------
 
-Static code analysis runs Checkstyle, FindBugs, PMD, Lint, KtLint and Detekt. It can be executed with command:
+Static code analysis runs Checkstyle, PMD, Lint and Detekt. It can be executed with command:
 
 ```
 ./gradlew check
@@ -168,6 +164,7 @@ Mentions
 --------
 - [Android Weekly - issue #324](https://androidweekly.net/issues/issue-324)
 - [Android Weekly China - issue #194](https://androidweekly.cn/android-dev-weekly-issue-194/)
+- [30 summertime libraries which you don't want to miss in 2018](https://medium.com/@mmbialas/30-summertime-android-libraries-and-tools-which-you-dont-want-to-miss-in-2018-fab053d69503)
 
 References
 ----------
@@ -175,6 +172,7 @@ References
 - https://android-developers.googleblog.com/2018/06/better-biometrics-in-android-p.html
 - https://developer.android.com/reference/android/hardware/biometrics/BiometricPrompt
 - https://github.com/Kieun/android-biometricprompt
+- https://android-developers.googleblog.com/2019/10/one-biometric-api-over-all-android.html
 
 License
 -------
