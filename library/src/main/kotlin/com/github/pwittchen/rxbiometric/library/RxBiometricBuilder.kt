@@ -16,15 +16,34 @@
 package com.github.pwittchen.rxbiometric.library
 
 import android.content.DialogInterface
+import android.os.Build
 import com.github.pwittchen.rxbiometric.library.RxBiometric.Companion
 import java.util.concurrent.Executor
 
 class RxBiometricBuilder {
   internal lateinit var title: String
   internal lateinit var description: String
-  internal lateinit var negativeButtonText: String
-  internal lateinit var negativeButtonListener: DialogInterface.OnClickListener
+  internal var negativeButtonText: String? = null
+  internal var negativeButtonListener: DialogInterface.OnClickListener? = null
   internal lateinit var executor: Executor
+  internal var deviceCredentialAllowed: Boolean? = null
+  internal var confirmationRequired: Boolean = false
+  internal var allowedAuthenticators: Int? = null
+
+  fun deviceCredentialAllowed(enable: Boolean): RxBiometricBuilder {
+    if (Build.VERSION.SDK_INT < 30) this.deviceCredentialAllowed = enable
+    return this
+  }
+
+  fun confirmationRequired(enable: Boolean): RxBiometricBuilder {
+    this.confirmationRequired = enable
+    return this
+  }
+
+  fun allowedAuthenticators(@AuthenticatorTypes value: Int): RxBiometricBuilder {
+    if (Build.VERSION.SDK_INT >= 29) this.allowedAuthenticators = value
+    return this
+  }
 
   fun title(title: String): RxBiometricBuilder {
     this.title = title

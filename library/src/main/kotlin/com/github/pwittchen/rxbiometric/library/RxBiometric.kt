@@ -16,6 +16,9 @@
 package com.github.pwittchen.rxbiometric.library
 
 import android.content.DialogInterface
+import android.os.Build
+import androidx.annotation.IntDef
+import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.AuthenticationCallback
 import androidx.biometric.BiometricPrompt.CryptoObject
@@ -24,12 +27,18 @@ import io.reactivex.Completable
 import io.reactivex.CompletableEmitter
 import java.util.concurrent.Executor
 
+@IntDef(flag = true, value = [Authenticators.BIOMETRIC_STRONG, Authenticators.BIOMETRIC_WEAK, Authenticators.DEVICE_CREDENTIAL])
+internal annotation class AuthenticatorTypes
+
 class RxBiometric {
   companion object {
     private lateinit var title: String
     private lateinit var description: String
-    private lateinit var negativeButtonText: String
-    private lateinit var negativeButtonListener: DialogInterface.OnClickListener
+    private var negativeButtonText: String? = null
+    private var deviceCredentialAllowed: Boolean? = null
+    private var negativeButtonListener: DialogInterface.OnClickListener? = null
+    private var confirmationRequired: Boolean = false
+    private var allowedAuthenticators: Int? = null
     private lateinit var executor: Executor
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -41,11 +50,27 @@ class RxBiometric {
       this.description = builder.description
       this.negativeButtonText = builder.negativeButtonText
       this.negativeButtonListener = builder.negativeButtonListener
+      this.deviceCredentialAllowed = builder.deviceCredentialAllowed
+      this.allowedAuthenticators = builder.allowedAuthenticators
+      this.confirmationRequired = builder.confirmationRequired
       this.executor = builder.executor
-      this.promptInfo = BiometricPrompt.PromptInfo.Builder()
+      val promptBuilder = BiometricPrompt.PromptInfo.Builder()
+        .setConfirmationRequired(confirmationRequired)
         .setTitle(title)
         .setDescription(description)
-        .setNegativeButtonText(negativeButtonText).build()
+
+      deviceCredentialAllowed?.let {
+        promptBuilder.setDeviceCredentialAllowed(it)
+      }
+
+      allowedAuthenticators?.let {
+        promptBuilder.setAllowedAuthenticators(it)
+      }
+
+      negativeButtonText?.let {
+        promptBuilder.setNegativeButtonText(it)
+      }
+      this.promptInfo = promptBuilder.build()
       return this
     }
 
@@ -57,6 +82,23 @@ class RxBiometric {
     @JvmStatic
     fun title(title: String): RxBiometricBuilder {
       return builder().title(title)
+    }
+
+    @JvmStatic
+    fun deviceCredentialAllowed(enable: Boolean): RxBiometricBuilder {
+      if (Build.VERSION.SDK_INT < 30) return builder().deviceCredentialAllowed(enable)
+      return builder()
+    }
+
+    @JvmStatic
+    fun confirmationRequired(enable: Boolean): RxBiometricBuilder {
+      return builder().confirmationRequired(enable)
+    }
+
+    @JvmStatic
+    fun allowedAuthenticators(@AuthenticatorTypes value: Int): RxBiometricBuilder {
+      if (Build.VERSION.SDK_INT >= 29) return builder().allowedAuthenticators(value)
+      return builder()
     }
 
     @JvmStatic
@@ -74,7 +116,8 @@ class RxBiometric {
       return builder().negativeButtonListener(listener)
     }
 
-    @JvmStatic fun executor(executor: Executor): RxBiometricBuilder {
+    @JvmStatic
+    fun executor(executor: Executor): RxBiometricBuilder {
       return builder().executor(executor)
     }
 
